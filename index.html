@@ -1,0 +1,707 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>كشف حضور وغياب اسرة ايليا النبي</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #007bff;
+            --success: #28a745;
+            --danger: #dc3545;
+            --dark: #343a40;
+            --light: #f8f9fa;
+            --border: #dee2e6;
+        }
+
+        body {
+            font-family: 'Segoe UI', 'Cairo', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 1rem;
+        }
+
+        .container {
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        .header {
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .header h1 {
+            text-align: center;
+            font-size: 28px;
+            color: var(--dark);
+            margin-bottom: 1.5rem;
+        }
+
+        .btn-add-date {
+            width: 100%;
+            padding: 0.75rem;
+            background: var(--success);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.3s;
+            margin-bottom: 1rem;
+        }
+
+        .btn-add-date:hover {
+            background: #218838;
+        }
+
+        .date-selector {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+            gap: 10px;
+            margin-bottom: 1.5rem;
+        }
+
+        .date-btn {
+            padding: 0.75rem;
+            border: 2px solid var(--border);
+            background: white;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 600;
+            transition: all 0.3s;
+            color: var(--dark);
+            word-break: break-word;
+        }
+
+        .date-btn:hover {
+            border-color: var(--primary);
+            background: var(--light);
+        }
+
+        .date-btn.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        .stat-card {
+            padding: 1rem;
+            border-radius: 8px;
+            text-align: center;
+            background: var(--light);
+            border: 1px solid var(--border);
+        }
+
+        .stat-number {
+            font-size: 24px;
+            font-weight: bold;
+            margin: 0.5rem 0;
+            color: var(--primary);
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: #666;
+        }
+
+        .main-content {
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .message {
+            padding: 0.75rem;
+            border-radius: 6px;
+            margin-bottom: 1rem;
+            font-size: 13px;
+            display: none;
+        }
+
+        .message.error {
+            background: #f8d7da;
+            color: #721c24;
+            display: block;
+        }
+
+        .message.success {
+            background: #d4edda;
+            color: #155724;
+            display: block;
+        }
+
+        .search-box {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            font-size: 14px;
+            margin-bottom: 1rem;
+            font-family: inherit;
+        }
+
+        .search-box::placeholder {
+            color: #999;
+        }
+
+        .student-list {
+            max-height: 500px;
+            overflow-y: auto;
+            margin-bottom: 1rem;
+        }
+
+        .student-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 1rem;
+            border-bottom: 1px solid var(--border);
+            transition: background 0.2s;
+        }
+
+        .student-item:last-child {
+            border-bottom: none;
+        }
+
+        .student-item:hover {
+            background: var(--light);
+        }
+
+        .student-name {
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--dark);
+            flex: 1;
+        }
+
+        .checkbox {
+            width: 22px;
+            height: 22px;
+            cursor: pointer;
+            accent-color: var(--success);
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 2rem;
+            color: #999;
+        }
+
+        .btn-add-student {
+            width: 100%;
+            padding: 1rem;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .btn-add-student:hover {
+            background: #0056b3;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            direction: rtl;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 2rem;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 400px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+            position: relative;
+        }
+
+        .modal-header {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            color: var(--dark);
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: #999;
+        }
+
+        .input-group {
+            margin-bottom: 1rem;
+        }
+
+        .input-group label {
+            display: block;
+            font-size: 13px;
+            color: #666;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            font-size: 14px;
+            font-family: inherit;
+        }
+
+        .input-group input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
+        }
+
+        .modal-btn {
+            width: 100%;
+            padding: 0.75rem;
+            margin-top: 1.5rem;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .modal-btn:hover {
+            background: #0056b3;
+        }
+
+        .sync-status {
+            font-size: 12px;
+            color: #666;
+            text-align: center;
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid var(--border);
+        }
+
+        .loading-text {
+            text-align: center;
+            padding: 1rem;
+            color: #999;
+            font-size: 14px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>كشف حضور وغياب اسرة ايليا النبي</h1>
+
+            <button class="btn-add-date" onclick="openAddDateModal()">+ إضافة يوم جديد</button>
+
+            <div class="date-selector" id="dateSelector">
+                <div class="loading-text">جاري التحميل...</div>
+            </div>
+
+            <div class="stats">
+                <div class="stat-card">
+                    <div class="stat-label">حاضرين</div>
+                    <div class="stat-number" id="presentCount">0</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">غايبين</div>
+                    <div class="stat-number" id="absentCount">0</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="main-content">
+            <div class="message" id="message"></div>
+            <input type="text" class="search-box" id="searchBox" placeholder="ابحث عن طالب...">
+
+            <div id="contentArea">
+                <div class="loading-text">جاري التحميل...</div>
+            </div>
+
+            <button class="btn-add-student" onclick="openAddStudentModal()">+ إضافة طالب جديد</button>
+
+            <div class="sync-status" id="syncStatus">⟳ جاري التحميل...</div>
+        </div>
+    </div>
+
+    <div class="modal" id="addDateModal">
+        <div class="modal-content">
+            <button class="modal-close" onclick="closeAddDateModal()">×</button>
+            <div class="modal-header">إضافة يوم جديد</div>
+            <div class="input-group">
+                <label>أدخل التاريخ</label>
+                <input type="text" id="newDate" placeholder="اليوم-الشهر-السنة" maxlength="10">
+            </div>
+            <button class="modal-btn" onclick="addNewDate()">إضافة</button>
+        </div>
+    </div>
+
+    <div class="modal" id="addStudentModal">
+        <div class="modal-content">
+            <button class="modal-close" onclick="closeAddStudentModal()">×</button>
+            <div class="modal-header">إضافة طالب جديد</div>
+            <div class="input-group">
+                <label>اسم الطالب</label>
+                <input type="text" id="newStudentName" placeholder="أدخل الاسم">
+            </div>
+            <button class="modal-btn" onclick="addNewStudent()">إضافة</button>
+        </div>
+    </div>
+
+    <script>
+        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxKsOMWcPlOYrGNf-QJY84FXJPZ6mUFoGIrY9dvJeRdxuaqCYgJHTXljlWrIE66JpM/exec';
+
+        let allData = [];
+        let selectedDate = null;
+        let searchTerm = '';
+
+        function showMessage(text, type) {
+            const messageDiv = document.getElementById('message');
+            messageDiv.className = `message ${type}`;
+            messageDiv.textContent = text;
+            setTimeout(() => {
+                messageDiv.className = 'message';
+            }, 4000);
+        }
+
+        async function loadData() {
+            try {
+                document.getElementById('syncStatus').textContent = '⟳ جاري التحميل...';
+
+                const response = await fetch(`${SCRIPT_URL}?action=getAttendanceData`);
+                const result = await response.json();
+
+                if (result.success && result.data) {
+                    allData = result.data;
+                    renderDates();
+                    if (selectedDate) {
+                        renderStudents();
+                    } else {
+                        document.getElementById('contentArea').innerHTML = '<div class="empty-state">اختر أو أضف يوم عشان تبدأ</div>';
+                        document.getElementById('presentCount').textContent = '0';
+                        document.getElementById('absentCount').textContent = '0';
+                    }
+                    document.getElementById('syncStatus').textContent = '✓ متزامن مع الشيت';
+                } else {
+                    document.getElementById('syncStatus').textContent = '✗ خطأ في التحميل';
+                    showMessage('خطأ في تحميل البيانات', 'error');
+                }
+            } catch (error) {
+                document.getElementById('syncStatus').textContent = '✗ خطأ في الاتصال';
+                showMessage('خطأ في الاتصال بالخادم', 'error');
+            }
+        }
+
+        function renderDates() {
+            const dateSelector = document.getElementById('dateSelector');
+            dateSelector.innerHTML = '';
+
+            if (!allData || allData.length === 0) {
+                dateSelector.innerHTML = '<div style="grid-column: 1/-1; text-align: center; color: #999; padding: 1rem;">لم يتم إضافة أي أيام بعد</div>';
+                return;
+            }
+
+            const dates = allData[0].slice(1);
+
+            dates.forEach((date) => {
+                if (!date) return;
+
+                const btn = document.createElement('button');
+                btn.className = `date-btn ${selectedDate === date ? 'active' : ''}`;
+                btn.textContent = String(date);
+                btn.onclick = () => selectDate(date);
+                dateSelector.appendChild(btn);
+            });
+        }
+
+        function selectDate(date) {
+            selectedDate = date;
+            renderDates();
+            renderStudents();
+        }
+
+        function renderStudents() {
+            if (!selectedDate) {
+                document.getElementById('contentArea').innerHTML = '<div class="empty-state">اختر أو أضف يوم عشان تبدأ</div>';
+                document.getElementById('presentCount').textContent = '0';
+                document.getElementById('absentCount').textContent = '0';
+                return;
+            }
+
+            if (!allData || allData.length < 2) {
+                document.getElementById('contentArea').innerHTML = '<div class="empty-state">لا توجد بيانات</div>';
+                document.getElementById('presentCount').textContent = '0';
+                document.getElementById('absentCount').textContent = '0';
+                return;
+            }
+
+            const headers = allData[0];
+            let dateColumnIndex = -1;
+
+            // البحث عن عمود التاريخ - مقارنة مباشرة
+            for (let j = 0; j < headers.length; j++) {
+                if (String(headers[j]).trim() === String(selectedDate).trim()) {
+                    dateColumnIndex = j;
+                    break;
+                }
+            }
+
+            if (dateColumnIndex === -1) {
+                document.getElementById('contentArea').innerHTML = '<div class="empty-state">لم يتم العثور على التاريخ</div>';
+                return;
+            }
+
+            let html = '<div class="student-list">';
+            let presentCount = 0;
+            let absentCount = 0;
+            let displayedCount = 0;
+
+            for (let i = 1; i < allData.length; i++) {
+                const studentName = allData[i][0];
+                if (!studentName) continue;
+
+                if (searchTerm && !studentName.toLowerCase().includes(searchTerm.toLowerCase())) continue;
+
+                const status = allData[i][dateColumnIndex];
+                const isPresent = status === '✓';
+
+                if (isPresent) presentCount++;
+                else absentCount++;
+
+                displayedCount++;
+
+                html += `
+          <div class="student-item">
+            <span class="student-name">${studentName}</span>
+            <input type="checkbox" class="checkbox" ${isPresent ? 'checked' : ''} 
+                   onchange="toggleAttendance('${studentName.replace(/'/g, "\\'")}', '${selectedDate.replace(/'/g, "\\'")}')"
+            >
+          </div>
+        `;
+            }
+
+            html += '</div>';
+
+            if (displayedCount === 0) {
+                html = '<div class="empty-state">لا توجد طلاب مسجلين</div>';
+            }
+
+            document.getElementById('contentArea').innerHTML = html;
+            document.getElementById('presentCount').textContent = presentCount;
+            document.getElementById('absentCount').textContent = absentCount;
+        }
+
+        async function toggleAttendance(studentName, dateText) {
+            try {
+                const headers = allData[0];
+                let dateColumnIndex = -1;
+
+                for (let j = 0; j < headers.length; j++) {
+                    if (String(headers[j]).trim() === String(dateText).trim()) {
+                        dateColumnIndex = j;
+                        break;
+                    }
+                }
+
+                if (dateColumnIndex === -1) {
+                    showMessage('خطأ: لم يتم العثور على التاريخ', 'error');
+                    return;
+                }
+
+                let studentRowIndex = -1;
+                for (let i = 1; i < allData.length; i++) {
+                    if (String(allData[i][0]).trim() === String(studentName).trim()) {
+                        studentRowIndex = i;
+                        break;
+                    }
+                }
+
+                if (studentRowIndex === -1) {
+                    showMessage('خطأ: لم يتم العثور على الطالب', 'error');
+                    return;
+                }
+
+                const currentStatus = allData[studentRowIndex][dateColumnIndex];
+                const newStatus = (currentStatus === '✓') ? '' : '✓';
+
+                const response = await fetch(SCRIPT_URL, {
+                    method: 'POST',
+                    body: JSON.stringify({
+                        action: 'updateAttendance',
+                        studentName: studentName,
+                        dateText: dateText,
+                        status: newStatus
+                    })
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    allData[studentRowIndex][dateColumnIndex] = newStatus;
+                    renderStudents();
+
+                    setTimeout(() => {
+                        loadData();
+                    }, 800);
+                } else {
+                    showMessage('خطأ في الحفظ', 'error');
+                    loadData();
+                }
+            } catch (error) {
+                showMessage('خطأ في التحديث', 'error');
+                loadData();
+            }
+        }
+
+        function openAddDateModal() {
+            document.getElementById('newDate').value = '';
+            document.getElementById('addDateModal').classList.add('active');
+            document.getElementById('newDate').focus();
+        }
+
+        function closeAddDateModal() {
+            document.getElementById('addDateModal').classList.remove('active');
+        }
+
+        async function addNewDate() {
+            const dateText = document.getElementById('newDate').value.trim();
+            if (!dateText) {
+                showMessage('أدخل التاريخ', 'error');
+                return;
+            }
+
+            try {
+                const response = await fetch(SCRIPT_URL, {
+                    method: 'POST',
+                    body: JSON.stringify({
+                        action: 'addDate',
+                        dateText: dateText
+                    })
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    closeAddDateModal();
+                    showMessage('✓ تم إضافة اليوم بنجاح', 'success');
+                    await loadData();
+                } else {
+                    showMessage('✗ خطأ في إضافة اليوم', 'error');
+                }
+            } catch (error) {
+                showMessage('✗ خطأ في الاتصال', 'error');
+            }
+        }
+
+        function openAddStudentModal() {
+            document.getElementById('newStudentName').value = '';
+            document.getElementById('addStudentModal').classList.add('active');
+            document.getElementById('newStudentName').focus();
+        }
+
+        function closeAddStudentModal() {
+            document.getElementById('addStudentModal').classList.remove('active');
+        }
+
+        async function addNewStudent() {
+            const name = document.getElementById('newStudentName').value.trim();
+            if (!name) {
+                showMessage('أدخل اسم الطالب', 'error');
+                return;
+            }
+
+            try {
+                const response = await fetch(SCRIPT_URL, {
+                    method: 'POST',
+                    body: JSON.stringify({
+                        action: 'addStudent',
+                        studentName: name
+                    })
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    closeAddStudentModal();
+                    showMessage('✓ تم إضافة الطالب بنجاح', 'success');
+                    await loadData();
+                } else {
+                    showMessage('✗ خطأ في إضافة الطالب', 'error');
+                }
+            } catch (error) {
+                showMessage('✗ خطأ في الاتصال', 'error');
+            }
+        }
+
+        document.getElementById('searchBox').addEventListener('input', (e) => {
+            searchTerm = e.target.value;
+            renderStudents();
+        });
+
+        document.getElementById('addDateModal').addEventListener('click', (e) => {
+            if (e.target === e.currentTarget) closeAddDateModal();
+        });
+
+        document.getElementById('addStudentModal').addEventListener('click', (e) => {
+            if (e.target === e.currentTarget) closeAddStudentModal();
+        });
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                closeAddDateModal();
+                closeAddStudentModal();
+            }
+        });
+
+        loadData();
+        setInterval(loadData, 30000);
+    </script>
+</body>
+
+</html>

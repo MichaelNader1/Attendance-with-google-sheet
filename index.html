@@ -358,13 +358,13 @@
 
         <div class="main-content">
             <div class="message" id="message"></div>
-            <input type="text" class="search-box" id="searchBox" placeholder="ابحث عن طالب...">
+            <input type="text" class="search-box" id="searchBox" placeholder="ابحث عن مخدوم...">
 
             <div id="contentArea">
                 <div class="loading-text">جاري التحميل...</div>
             </div>
 
-            <button class="btn-add-student" onclick="openAddStudentModal()">+ إضافة طالب جديد</button>
+            <button class="btn-add-student" onclick="openAddStudentModal()">+ إضافة مخدوم جديد</button>
 
             <div class="sync-status" id="syncStatus">⟳ جاري التحميل...</div>
         </div>
@@ -385,7 +385,7 @@
     <div class="modal" id="addStudentModal">
         <div class="modal-content">
             <button class="modal-close" onclick="closeAddStudentModal()">×</button>
-            <div class="modal-header">إضافة طالب جديد</div>
+            <div class="modal-header">إضافة مخدوم جديد</div>
             <div class="input-group">
                 <label>اسم الطالب</label>
                 <input type="text" id="newStudentName" placeholder="أدخل الاسم">
@@ -529,7 +529,7 @@
             html += '</div>';
 
             if (displayedCount === 0) {
-                html = '<div class="empty-state">لا توجد طلاب مسجلين</div>';
+                html = '<div class="empty-state">لا توجد مخدومين مسجلين</div>';
             }
 
             document.getElementById('contentArea').innerHTML = html;

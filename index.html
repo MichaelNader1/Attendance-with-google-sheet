@@ -532,7 +532,11 @@
                 html = '<div class="empty-state">لا توجد مخدومين مسجلين</div>';
             }
 
+            const container = document.querySelector('.student-list');
+            const scrollPosition = container ? container.scrollTop : 0;
             document.getElementById('contentArea').innerHTML = html;
+            const newContainer = document.querySelector('.student-list');
+            if (newContainer) newContainer.scrollTop = scrollPosition;
             document.getElementById('presentCount').textContent = presentCount;
             document.getElementById('absentCount').textContent = absentCount;
         }
